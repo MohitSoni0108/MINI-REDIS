@@ -1,0 +1,141 @@
+BUILD YOUR OWN REDIS
+│
+├── 1. NETWORKING
+│   ├── TCP
+│   ├── Server
+│   ├── Client
+│   ├── Connections
+│   └── Multiple clients / concurrency
+│
+├── 2. COMMAND SYSTEM
+│   ├── Command input
+│   ├── Parsing
+│   ├── Validation
+│   ├── Command dispatch
+│   └── Response generation
+│
+├── 3. CORE KEY-VALUE ENGINE
+│   ├── SET
+│   ├── GET
+│   ├── DEL
+│   ├── EXISTS
+│   ├── KEYS
+│   └── FLUSHALL
+│
+├── 4. EXPIRY ENGINE
+│   ├── EXPIRE
+│   ├── TTL
+│   ├── PERSIST
+│   └── Actual expiration
+│
+├── 5. DATA TYPES
+│   ├── Type #1
+│   ├── Type #2
+│   └── Type #3
+│
+├── 6. PERSISTENCE
+│   ├── Snapshot
+│   ├── Disk format
+│   ├── Saving
+│   └── Reload on restart
+│
+├── 7. CLI
+│   ├── Input
+│   ├── TCP connection
+│   ├── Send command
+│   └── Display response
+│
+├── 8. CONCURRENCY
+│   ├── Multiple connections
+│   ├── Shared database
+│   └── Safe concurrent access
+│
+├── 9. TESTING
+│   ├── Commands
+│   ├── Expiry
+│   ├── Data types
+│   ├── Persistence
+│   └── Multiple clients
+│
+├── 10. DOCUMENTATION
+│   ├── Architecture
+│   ├── Data structures
+│   ├── Concurrency
+│   ├── Persistence
+│   ├── Testing
+│   └── Limitations
+│
+└── 11. BONUS
+    ├── RESP
+    ├── Pub/Sub
+    ├── MULTI/EXEC
+    ├── AOF
+    ├── LRU/LFU
+    ├── Replication
+    ├── EVAL
+    ├── AUTH
+    └── Benchmarking
+
+
+
+                         ┌───────────────┐
+                         │     USER      │
+                         └───────┬───────┘
+                                 │
+                                 ▼
+                         ┌───────────────┐
+                         │  CLI CLIENT   │
+                         └───────┬───────┘
+                                 │
+                              TCP
+                                 │
+                                 ▼
+                  ┌──────────────────────────┐
+                  │       TCP SERVER         │
+                  │                          │
+                  │  Connection Manager      │
+                  └────────────┬─────────────┘
+                               │
+                               ▼
+                  ┌──────────────────────────┐
+                  │     PROTOCOL/PARSER      │
+                  └────────────┬─────────────┘
+                               │
+                               ▼
+                  ┌──────────────────────────┐
+                  │    COMMAND DISPATCHER    │
+                  └────────────┬─────────────┘
+                               │
+              ┌────────────────┼────────────────┐
+              ▼                ▼                ▼
+        Core Commands     Expiry Commands    Type Commands
+              │                │                │
+              │                │       ┌────────┼────────┐
+              │                │       ▼        ▼        ▼
+              │                │    Strings   Lists    Hashes
+              │                │
+              └────────────────┼────────────────┘
+                               ▼
+                  ┌──────────────────────────┐
+                  │      STORAGE ENGINE      │
+                  │                          │
+                  │       KEY → ENTRY        │
+                  │                          │
+                  │  type + value + expiry   │
+                  └────────────┬─────────────┘
+                               │
+                 ┌─────────────┴─────────────┐
+                 ▼                           ▼
+       ┌──────────────────┐       ┌────────────────────┐
+       │   EXPIRY ENGINE  │       │ PERSISTENCE ENGINE │
+       │                  │       │                    │
+       │ EXPIRE           │       │ Snapshot           │
+       │ TTL              │       │ Serialization      │
+       │ PERSIST          │       │ Disk               │
+       │ Actual expiry    │       │ Reload             │
+       └──────────────────┘       └─────────┬──────────┘
+                                             │
+                                             ▼
+                                      ┌────────────┐
+                                      │    DISK    │
+                                      └────────────┘

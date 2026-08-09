@@ -1,0 +1,50 @@
+PHASE 0
+Project foundation
+        ↓
+PHASE 1
+TCP Server + TCP Client
+        ↓
+PHASE 2
+Connection handling
+        ↓
+PHASE 3
+Command Parser
+        ↓
+PHASE 4
+Command Dispatcher
+        ↓
+PHASE 5
+Core Storage Engine
+        ↓
+PHASE 6
+SET / GET / DEL / EXISTS / KEYS / FLUSHALL
+        ↓
+PHASE 7
+Strings
+        ↓
+PHASE 8
+Lists
+        ↓
+PHASE 9
+Hashes
+        ↓
+PHASE 10
+Expiry Engine
+        ↓
+PHASE 11
+Persistence
+        ↓
+PHASE 12
+Restart Recovery
+        ↓
+PHASE 13
+Concurrency Testing
+        ↓
+PHASE 14
+Full Integration Testing
+        ↓
+PHASE 15
+README + Architecture + Demo
+        ↓
+PHASE 16
+BONUS
