@@ -3,8 +3,8 @@ class Database {
     this.store = new Map();
   }
 
-  set(key, value) {
-    this.store.set(key, value);
+  set(key, entry) {
+    this.store.set(key, entry);
   }
 
   get(key) {
