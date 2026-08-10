@@ -57,6 +57,16 @@ case "HDEL":
 case "HEXISTS":
   return handleHExists(args);
 
+
+case "EXPIRE":
+  return handleExpire(args);
+
+case "TTL":
+  return handleTTL(args);
+
+case "PERSIST":
+  return handlePersist(args);
+
     default:
       return {
         success: false,
@@ -86,12 +96,6 @@ function handleSet(args) {
     message: "OK"
   };
 }
-
-
-
-
-
-
 
 function handleGet(args) {
   const [key] = args;
@@ -584,5 +588,69 @@ function handleHExists(args) {
   return {
     success: true,
     message: `(integer) ${field in entry.value ? 1 : 0}`
+  };
+}
+
+//expiration functions 
+function handleExpire(args) {
+  const [key, seconds] = args;
+
+  if (!key || seconds === undefined) {
+    return {
+      success: false,
+      message: "ERR wrong number of arguments for EXPIRE"
+    };
+  }
+
+  const duration = Number(seconds);
+
+  if (!Number.isInteger(duration) || duration < 0) {
+    return {
+      success: false,
+      message: "ERR invalid expire time"
+    };
+  }
+
+  const success = database.expire(key, duration);
+
+  return {
+    success: true,
+    message: success ? "(integer) 1" : "(integer) 0"
+  };
+}
+
+function handleTTL(args) {
+  const [key] = args;
+
+  if (!key) {
+    return {
+      success: false,
+      message: "ERR wrong number of arguments for TTL"
+    };
+  }
+
+  const ttl = database.ttl(key);
+
+  return {
+    success: true,
+    message: `(integer) ${ttl}`
+  };
+}
+
+function handlePersist(args) {
+  const [key] = args;
+
+  if (!key) {
+    return {
+      success: false,
+      message: "ERR wrong number of arguments for PERSIST"
+    };
+  }
+
+  const success = database.persist(key);
+
+  return {
+    success: true,
+    message: success ? "(integer) 1" : "(integer) 0"
   };
 }
