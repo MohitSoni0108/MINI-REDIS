@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "server": "node src/server/server.js",
-    "client": "node src/client/cli.js"
+    "client": "node src/client/cli.js",
+    "dev": "nodemon src/server/server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

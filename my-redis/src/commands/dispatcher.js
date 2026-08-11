@@ -2,79 +2,203 @@ import { database } from "../storage/database.js";
 import { createString, isString } from "../storage/dataTypes/strings.js";
 import { createList, isList } from "../storage/dataTypes/lists.js";
 import { createHash, isHash } from "../storage/dataTypes/hashes.js";
+import { saveSnapshot } from "../storage/persistence.js";
 
-export function dispatchCommand(commandData) {
+
+const MUTATING_COMMANDS = new Set([
+  "SET",
+  "DEL",
+  "FLUSHALL",
+
+  "LPUSH",
+  "RPUSH",
+  "LPOP",
+  "RPOP",
+
+  "HSET",
+  "HDEL",
+
+  "EXPIRE",
+  "PERSIST"
+]);
+
+
+
+
+// export async function dispatchCommand(commandData) {
+//   const { command, args } = commandData;
+
+// if (MUTATING_COMMANDS.has(command)) {
+//   await saveSnapshot();
+// }
+//   switch (command) {
+//     case "SET":
+//       return handleSet(args);
+
+//     case "GET":
+//       return handleGet(args);
+
+//     case "DEL":
+//       return handleDel(args);
+
+//     case "EXISTS":
+//       return handleExists(args);
+
+//     case "KEYS":
+//       return handleKeys(args);
+
+//     case "FLUSHALL":
+//       return handleFlushAll(args);
+
+
+// case "LPUSH":
+//   return handleLPush(args);
+
+// case "RPUSH":
+//   return handleRPush(args);
+
+// case "LPOP":
+//   return handleLPop(args);
+
+// case "RPOP":
+//   return handleRPop(args);
+
+// case "LRANGE":
+//   return handleLRange(args);
+
+
+// case "HSET":
+//   return handleHSet(args);
+
+// case "HGET":
+//   return handleHGet(args);
+
+// case "HGETALL":
+//   return handleHGetAll(args);
+
+// case "HDEL":
+//   return handleHDel(args);
+
+// case "HEXISTS":
+//   return handleHExists(args);
+
+
+// case "EXPIRE":
+//   return handleExpire(args);
+
+// case "TTL":
+//   return handleTTL(args);
+
+// case "PERSIST":
+//   return handlePersist(args);
+
+//     default:
+//       return {
+//         success: false,
+//         message: `Unknown command: ${command}`
+//       };
+//   }
+// }
+
+export async function dispatchCommand(commandData) {
   const { command, args } = commandData;
+  
+  let result; // 1. Create a variable to hold the handler's response
 
+  // 2. Change "return" to "result =" and add "break;" so the function doesn't exit yet
   switch (command) {
     case "SET":
-      return handleSet(args);
+      result = handleSet(args);
+      break;
 
     case "GET":
-      return handleGet(args);
+      result = handleGet(args);
+      break;
 
     case "DEL":
-      return handleDel(args);
+      result = handleDel(args);
+      break;
 
     case "EXISTS":
-      return handleExists(args);
+      result = handleExists(args);
+      break;
 
     case "KEYS":
-      return handleKeys(args);
+      result = handleKeys(args);
+      break;
 
     case "FLUSHALL":
-      return handleFlushAll(args);
+      result = handleFlushAll(args);
+      break;
 
+    case "LPUSH":
+      result = handleLPush(args);
+      break;
 
-case "LPUSH":
-  return handleLPush(args);
+    case "RPUSH":
+      result = handleRPush(args);
+      break;
 
-case "RPUSH":
-  return handleRPush(args);
+    case "LPOP":
+      result = handleLPop(args);
+      break;
 
-case "LPOP":
-  return handleLPop(args);
+    case "RPOP":
+      result = handleRPop(args);
+      break;
 
-case "RPOP":
-  return handleRPop(args);
+    case "LRANGE":
+      result = handleLRange(args);
+      break;
 
-case "LRANGE":
-  return handleLRange(args);
+    case "HSET":
+      result = handleHSet(args);
+      break;
 
+    case "HGET":
+      result = handleHGet(args);
+      break;
 
-case "HSET":
-  return handleHSet(args);
+    case "HGETALL":
+      result = handleHGetAll(args);
+      break;
 
-case "HGET":
-  return handleHGet(args);
+    case "HDEL":
+      result = handleHDel(args);
+      break;
 
-case "HGETALL":
-  return handleHGetAll(args);
+    case "HEXISTS":
+      result = handleHExists(args);
+      break;
 
-case "HDEL":
-  return handleHDel(args);
+    case "EXPIRE":
+      result = handleExpire(args);
+      break;
 
-case "HEXISTS":
-  return handleHExists(args);
+    case "TTL":
+      result = handleTTL(args);
+      break;
 
-
-case "EXPIRE":
-  return handleExpire(args);
-
-case "TTL":
-  return handleTTL(args);
-
-case "PERSIST":
-  return handlePersist(args);
+    case "PERSIST":
+      result = handlePersist(args);
+      break;
 
     default:
-      return {
+      result = {
         success: false,
         message: `Unknown command: ${command}`
       };
+      break;
   }
-}
 
+  // 3. Only save if it's a mutating command AND the command was successful
+  if (MUTATING_COMMANDS.has(command) && result.success) {
+    await saveSnapshot();
+  }
+
+  // 4. Finally, return the result back to the caller
+  return result;
+}
 
 
 //string functions 

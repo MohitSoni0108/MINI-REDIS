@@ -67,14 +67,17 @@ class Database {
       return -1;
     }
 
-    const remainingMilliseconds = entry.expiresAt - Date.now();
+    const remainingMilliseconds =
+      entry.expiresAt - Date.now();
 
     if (remainingMilliseconds <= 0) {
       this.store.delete(key);
       return -2;
     }
 
-    return Math.floor(remainingMilliseconds / 1000);
+    return Math.floor(
+      remainingMilliseconds / 1000
+    );
   }
 
   persist(key) {
@@ -105,6 +108,25 @@ class Database {
       if (this.isExpired(entry)) {
         this.store.delete(key);
       }
+    }
+  }
+
+  //converting the map to json object 
+  exportData() {
+    this.removeExpiredKeys();
+
+    return Object.fromEntries(this.store);
+  }
+
+  importData(snapshot) {
+    this.store.clear();
+
+    for (const [key, entry] of Object.entries(snapshot)) {
+      if (this.isExpired(entry)) {
+        continue;
+      }
+
+      this.store.set(key, entry);
     }
   }
 }
