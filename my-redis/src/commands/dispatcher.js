@@ -4,6 +4,62 @@ import { createList, isList } from "../storage/dataTypes/lists.js";
 import { createHash, isHash } from "../storage/dataTypes/hashes.js";
 import { saveSnapshot } from "../storage/persistence.js";
 
+const COMMAND_RULES = {
+  SET: { min: 2, max: 2 },
+  GET: { min: 1, max: 1 },
+  DEL: { min: 1, max: 1 },
+  EXISTS: { min: 1, max: 1 },
+  KEYS: { min: 0, max: 0 },
+  FLUSHALL: { min: 0, max: 0 },
+
+  EXPIRE: { min: 2, max: 2 },
+  TTL: { min: 1, max: 1 },
+  PERSIST: { min: 1, max: 1 },
+
+  LPUSH: { min: 2 },
+  RPUSH: { min: 2 },
+  LPOP: { min: 1, max: 1 },
+  RPOP: { min: 1, max: 1 },
+  LRANGE: { min: 3, max: 3 },
+
+  HSET: { min: 3 },
+  HGET: { min: 2, max: 2 },
+  HGETALL: { min: 1, max: 1 },
+  HDEL: { min: 2, max: 2 }
+};
+
+function validateArguments(command, args) {
+  const rule = COMMAND_RULES[command];
+
+  if (!rule) {
+    return {
+      success: false,
+      message: `ERR unknown command '${command}'`
+    };
+  }
+
+  if (args.length < rule.min) {
+    return {
+      success: false,
+      message: `ERR wrong number of arguments for ${command}`
+    };
+  }
+
+  if (
+    rule.max !== undefined &&
+    args.length > rule.max
+  ) {
+    return {
+      success: false,
+      message: `ERR wrong number of arguments for ${command}`
+    };
+  }
+
+  return null;
+}
+
+
+
 
 const MUTATING_COMMANDS = new Set([
   "SET",
@@ -104,6 +160,19 @@ export async function dispatchCommand(commandData) {
   const { command, args } = commandData;
   
   let result; // 1. Create a variable to hold the handler's response
+
+
+const validationError = validateArguments(
+  command,
+  args
+);
+
+if (validationError) {
+  return validationError;
+}
+
+
+
 
   // 2. Change "return" to "result =" and add "break;" so the function doesn't exit yet
   switch (command) {
