@@ -1,68 +1,7 @@
 {
-  "name": {
+  "persistentTTL": {
     "type": "string",
-    "value": "mera bhai hero h",
-    "expiresAt": null
-  },
-  "a": {
-    "type": "string",
-    "value": "1",
-    "expiresAt": null
-  },
-  "b": {
-    "type": "string",
-    "value": "2",
-    "expiresAt": null
-  },
-  "c": {
-    "type": "string",
-    "value": "3",
-    "expiresAt": null
-  },
-  "partial": {
-    "type": "string",
-    "value": "value1",
-    "expiresAt": null
-  },
-  "shared": {
-    "type": "string",
-    "value": "world",
-    "expiresAt": null
-  },
-  "mylist": {
-    "type": "list",
-    "value": [
-      "a",
-      "b",
-      "c",
-      "a",
-      "b",
-      "c"
-    ],
-    "expiresAt": null
-  },
-  "my": {
-    "type": "list",
-    "value": [
-      "a",
-      "b",
-      "c"
-    ],
-    "expiresAt": null
-  },
-  "sentence": {
-    "type": "string",
-    "value": "This is a Redis like database",
-    "expiresAt": null
-  },
-  "user": {
-    "type": "hash",
-    "value": {
-      "name": "Mohit",
-      "age": "22",
-      "city": "Delhi",
-      "bio": "I am learning Redis"
-    },
-    "expiresAt": null
+    "value": "temporary data",
+    "expiresAt": 1786624939996
   }
 }
