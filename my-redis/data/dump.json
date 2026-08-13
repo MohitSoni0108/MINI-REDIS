@@ -1,7 +1,7 @@
 {
   "name": {
     "type": "string",
-    "value": "Mohit",
+    "value": "mera bhai hero h",
     "expiresAt": null
   },
   "a": {
@@ -48,6 +48,11 @@
       "b",
       "c"
     ],
+    "expiresAt": null
+  },
+  "sentence": {
+    "type": "string",
+    "value": "This is a Redis like database",
     "expiresAt": null
   }
 }
