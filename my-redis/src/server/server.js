@@ -4,49 +4,54 @@ import { parseCommand } from "../protocol/parser.js";
 import { dispatchCommand } from "../commands/dispatcher.js";
 import { loadSnapshot } from "../storage/persistence.js";
 
-
-  process.on("uncaughtException", (error) => {
-  console.error("UNCAUGHT EXCEPTION:", error);
-});
-
-process.on("unhandledRejection", (error) => {
-  console.error("UNHANDLED REJECTION:", error);
-});
-
-
 const PORT = 6379;
 const HOST = "127.0.0.1";
 
 const server = net.createServer((socket) => {
-
-  
-  
-  
   console.log("Client connected");
 
   socket.write("Welcome to MyRedis!\n");
 
-  socket.on("data", async (data) => {
-    try {
-      const input = data.toString().trim();
+  let buffer = "";
 
-      if (!input) {
-        return;
+  // Ensures commands from one client execute in order.
+  let commandQueue = Promise.resolve();
+
+  socket.on("data", (data) => {
+    buffer += data.toString();
+
+    let newlineIndex;
+
+    while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+      const line = buffer.slice(0, newlineIndex).trim();
+
+      buffer = buffer.slice(newlineIndex + 1);
+
+      if (!line) {
+        continue;
       }
 
-      console.log("Received:", input);
+      commandQueue = commandQueue
+        .then(async () => {
+          try {
+            console.log("Received:", line);
 
-      const commandData = parseCommand(input);
+            const commandData = parseCommand(line);
 
-      console.log("Parsed command:", commandData);
+            console.log("Parsed command:", commandData);
 
-      const result = await dispatchCommand(commandData);
+            const result = await dispatchCommand(commandData);
 
-      socket.write(`${result.message}\n`);
-    } catch (error) {
-      console.error("Command error:", error);
+            socket.write(`${result.message}\n`);
+          } catch (error) {
+            console.error("Command error:", error);
 
-      socket.write(`ERR ${error.message}\n`);
+            socket.write(`ERR ${error.message}\n`);
+          }
+        })
+        .catch((error) => {
+          console.error("Command queue error:", error);
+        });
     }
   });
 
@@ -54,9 +59,9 @@ const server = net.createServer((socket) => {
     console.log("Client disconnected");
   });
 
-socket.on("close", (hadError) => {
-  console.log("Socket closed. Had error:", hadError);
-});
+  socket.on("close", (hadError) => {
+    console.log("Socket closed. Had error:", hadError);
+  });
 
   socket.on("error", (error) => {
     console.error("Socket error:", error.message);

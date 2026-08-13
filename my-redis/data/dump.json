@@ -3,5 +3,30 @@
     "type": "string",
     "value": "Mohit",
     "expiresAt": null
+  },
+  "a": {
+    "type": "string",
+    "value": "1",
+    "expiresAt": null
+  },
+  "b": {
+    "type": "string",
+    "value": "2",
+    "expiresAt": null
+  },
+  "c": {
+    "type": "string",
+    "value": "3",
+    "expiresAt": null
+  },
+  "partial": {
+    "type": "string",
+    "value": "value1",
+    "expiresAt": null
+  },
+  "shared": {
+    "type": "string",
+    "value": "world",
+    "expiresAt": null
   }
 }
