@@ -572,8 +572,8 @@ function handleLRange(args) {
     };
   }
 
-  const startIndex = Number(start);
-  const endIndex = Number(end);
+  let startIndex = Number(start);
+  let endIndex = Number(end);
 
   if (Number.isNaN(startIndex) || Number.isNaN(endIndex)) {
     return {
@@ -582,16 +582,30 @@ function handleLRange(args) {
     };
   }
 
-  const result = entry.value.slice(
-    startIndex,
-    endIndex + 1
-  );
+  const length = entry.value.length;
+
+  // 1. Convert negative indices to positive relative to array length
+  if (startIndex < 0) startIndex = length + startIndex;
+  if (endIndex < 0) endIndex = length + endIndex;
+
+  // 2. Clamp to valid bounds (Standard Redis behavior)
+  if (startIndex < 0) startIndex = 0;
+  if (endIndex >= length) endIndex = length - 1;
+
+  // 3. If start is greater than end, return empty
+  if (startIndex > endIndex || startIndex >= length) {
+    return {
+      success: true,
+      message: "(empty list)"
+    };
+  }
+
+  // 4. Slice safely
+  const result = entry.value.slice(startIndex, endIndex + 1);
 
   return {
     success: true,
-    message: result.length > 0
-      ? result.join("\n")
-      : "(empty list)"
+    message: result.join("\n")
   };
 }
 

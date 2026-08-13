@@ -28,5 +28,26 @@
     "type": "string",
     "value": "world",
     "expiresAt": null
+  },
+  "mylist": {
+    "type": "list",
+    "value": [
+      "a",
+      "b",
+      "c",
+      "a",
+      "b",
+      "c"
+    ],
+    "expiresAt": null
+  },
+  "my": {
+    "type": "list",
+    "value": [
+      "a",
+      "b",
+      "c"
+    ],
+    "expiresAt": null
   }
 }
