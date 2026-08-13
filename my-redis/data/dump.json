@@ -54,5 +54,15 @@
     "type": "string",
     "value": "This is a Redis like database",
     "expiresAt": null
+  },
+  "user": {
+    "type": "hash",
+    "value": {
+      "name": "Mohit",
+      "age": "22",
+      "city": "Delhi",
+      "bio": "I am learning Redis"
+    },
+    "expiresAt": null
   }
 }

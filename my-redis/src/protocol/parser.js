@@ -8,32 +8,55 @@ export function parseCommand(input) {
     };
   }
 
-  const parts = trimmedInput.split(/\s+/);
+  const tokens = [];
+  let current = "";
+  let inQuotes = false;
+  let quoteCharacter = null;
 
-  const command = parts[0].toUpperCase();
+  for (let i = 0; i < trimmedInput.length; i++) {
+    const char = trimmedInput[i];
 
-  if (command === "SET") {
-    if (parts.length < 3) {
-      return {
-        command,
-        args: parts.slice(1)
-      };
+    // Start or end quoted value
+    if (char === '"' || char === "'") {
+      if (!inQuotes) {
+        inQuotes = true;
+        quoteCharacter = char;
+        continue;
+      }
+
+      if (char === quoteCharacter) {
+        inQuotes = false;
+        quoteCharacter = null;
+        continue;
+      }
     }
 
-    const key = parts[1];
+    // Whitespace separates tokens only outside quotes
+    if (/\s/.test(char) && !inQuotes) {
+      if (current.length > 0) {
+        tokens.push(current);
+        current = "";
+      }
 
-    const value = parts
-      .slice(2)
-      .join(" ");
+      continue;
+    }
 
-    return {
-      command,
-      args: [key, value]
-    };
+    current += char;
   }
+
+  // Unclosed quote
+  if (inQuotes) {
+    throw new Error("unterminated quote");
+  }
+
+  if (current.length > 0) {
+    tokens.push(current);
+  }
+
+  const command = tokens[0]?.toUpperCase() ?? "";
 
   return {
     command,
-    args: parts.slice(1)
+    args: tokens.slice(1)
   };
 }

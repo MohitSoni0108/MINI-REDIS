@@ -7,8 +7,8 @@ import { saveSnapshot } from "../storage/persistence.js";
 const COMMAND_RULES = {
   SET: { min: 2, max: 2 },
   GET: { min: 1, max: 1 },
-  DEL: { min: 1, max: 1 },
-  EXISTS: { min: 1, max: 1 },
+  DEL: { min: 1},
+  EXISTS: { min: 1},
   KEYS: { min: 0, max: 0 },
   FLUSHALL: { min: 0, max: 0 },
 
@@ -25,7 +25,8 @@ const COMMAND_RULES = {
   HSET: { min: 3 },
   HGET: { min: 2, max: 2 },
   HGETALL: { min: 1, max: 1 },
-  HDEL: { min: 2, max: 2 }
+  HDEL: { min: 2, max: 2 },
+  HEXISTS: { min: 2, max: 2 },
 };
 
 function validateArguments(command, args) {
@@ -55,6 +56,16 @@ function validateArguments(command, args) {
     };
   }
 
+
+  if (command === "HSET") {
+  if ((args.length - 1) % 2 !== 0) {
+    return {
+      success: false,
+      message: "ERR wrong number of arguments for HSET"
+    };
+  }
+}
+
   return null;
 }
 
@@ -81,80 +92,7 @@ const MUTATING_COMMANDS = new Set([
 
 
 
-// export async function dispatchCommand(commandData) {
-//   const { command, args } = commandData;
 
-// if (MUTATING_COMMANDS.has(command)) {
-//   await saveSnapshot();
-// }
-//   switch (command) {
-//     case "SET":
-//       return handleSet(args);
-
-//     case "GET":
-//       return handleGet(args);
-
-//     case "DEL":
-//       return handleDel(args);
-
-//     case "EXISTS":
-//       return handleExists(args);
-
-//     case "KEYS":
-//       return handleKeys(args);
-
-//     case "FLUSHALL":
-//       return handleFlushAll(args);
-
-
-// case "LPUSH":
-//   return handleLPush(args);
-
-// case "RPUSH":
-//   return handleRPush(args);
-
-// case "LPOP":
-//   return handleLPop(args);
-
-// case "RPOP":
-//   return handleRPop(args);
-
-// case "LRANGE":
-//   return handleLRange(args);
-
-
-// case "HSET":
-//   return handleHSet(args);
-
-// case "HGET":
-//   return handleHGet(args);
-
-// case "HGETALL":
-//   return handleHGetAll(args);
-
-// case "HDEL":
-//   return handleHDel(args);
-
-// case "HEXISTS":
-//   return handleHExists(args);
-
-
-// case "EXPIRE":
-//   return handleExpire(args);
-
-// case "TTL":
-//   return handleTTL(args);
-
-// case "PERSIST":
-//   return handlePersist(args);
-
-//     default:
-//       return {
-//         success: false,
-//         message: `Unknown command: ${command}`
-//       };
-//   }
-// }
 
 export async function dispatchCommand(commandData) {
   const { command, args } = commandData;
@@ -611,14 +549,8 @@ function handleLRange(args) {
 
 //hash functions
 function handleHSet(args) {
-  const [key, field, value] = args;
-
-  if (!key || !field || value === undefined) {
-    return {
-      success: false,
-      message: "ERR wrong number of arguments for HSET"
-    };
-  }
+  const key = args[0];
+  const fieldValuePairs = args.slice(1);
 
   let entry = database.get(key);
 
@@ -634,13 +566,23 @@ function handleHSet(args) {
     };
   }
 
-  const isNewField = !(field in entry.value);
+  let newFields = 0;
 
-  entry.value[field] = value;
+  // Loop through the field-value pairs 2 at a time
+  for (let i = 0; i < fieldValuePairs.length; i += 2) {
+    const field = fieldValuePairs[i];
+    const value = fieldValuePairs[i + 1];
+
+    if (!(field in entry.value)) {
+      newFields++;
+    }
+
+    entry.value[field] = value;
+  }
 
   return {
     success: true,
-    message: `(integer) ${isNewField ? 1 : 0}`
+    message: `(integer) ${newFields}`
   };
 }
 
