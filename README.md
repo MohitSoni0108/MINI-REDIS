@@ -87,6 +87,102 @@ Under the hood:
 
 ---
 
+# ▶️ Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/MohitSoni0108/MINI-REDIS.git
+```
+
+Enter the repository:
+
+```bash
+cd MINI-REDIS
+cd my-redis
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+---
+
+# ▶️ Running the Server
+
+Start the Mini Redis server:
+
+```bash
+npm run server
+```
+
+Expected output:
+
+```text
+MyRedis server running on 127.0.0.1:6379
+```
+
+---
+
+# 💻 Running the CLI Client
+
+Open another terminal in the project directory:
+
+```bash
+npm run client
+```
+
+You should see:
+
+```text
+Connected to MyRedis server
+myredis> Welcome to MyRedis!
+```
+
+Now commands can be entered interactively:
+
+```text
+myredis> SET name Mohit
+OK
+
+myredis> GET name
+Mohit
+```
+
+---
+
+# 🧪 Running the Complete Core Test Suite
+
+The entire core test suite can be executed with:
+
+```bash
+npm run test:core
+```
+
+This runs the individual test modules sequentially:
+
+```text
+Strings
+   ↓
+Lists
+   ↓
+Hashes
+   ↓
+Types + Multi-Key
+   ↓
+Expiration
+   ↓
+TCP Networking
+   ↓
+Persistence
+```
+
+The tests were run against the actual Mini Redis server and used to validate the mandatory core functionality.
+
+---
+
 # 🎯 Project Goals
 
 The main goal was to understand the internal architecture behind a Redis-like system by building the important components ourselves.
@@ -711,101 +807,6 @@ The test suite covers:
 * List persistence
 * Hash persistence
 * TTL persistence
-
----
-
-# ▶️ Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/MohitSoni0108/MINI-REDIS.git
-```
-
-Enter the repository:
-
-```bash
-cd MINI-REDIS
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
----
-
-# ▶️ Running the Server
-
-Start the Mini Redis server:
-
-```bash
-npm run server
-```
-
-Expected output:
-
-```text
-MyRedis server running on 127.0.0.1:6379
-```
-
----
-
-# 💻 Running the CLI Client
-
-Open another terminal in the project directory:
-
-```bash
-npm run client
-```
-
-You should see:
-
-```text
-Connected to MyRedis server
-myredis> Welcome to MyRedis!
-```
-
-Now commands can be entered interactively:
-
-```text
-myredis> SET name Mohit
-OK
-
-myredis> GET name
-Mohit
-```
-
----
-
-# 🧪 Running the Complete Core Test Suite
-
-The entire core test suite can be executed with:
-
-```bash
-npm run test:core
-```
-
-This runs the individual test modules sequentially:
-
-```text
-Strings
-   ↓
-Lists
-   ↓
-Hashes
-   ↓
-Types + Multi-Key
-   ↓
-Expiration
-   ↓
-TCP Networking
-   ↓
-Persistence
-```
-
-The tests were run against the actual Mini Redis server and used to validate the mandatory core functionality.
 
 ---
 
