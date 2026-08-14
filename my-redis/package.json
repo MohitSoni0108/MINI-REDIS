@@ -6,7 +6,8 @@
   "scripts": {
     "server": "node src/server/server.js",
     "client": "node src/client/cli.js",
-    "dev": "nodemon src/server/server.js"
+    "dev": "nodemon src/server/server.js",
+    "test:core": "node src/test/01-strings-test.js && node src/test/02-lists-test.js && node src/test/03-hashes-test.js && node src/test/04-types-multikey-test.js && node src/test/05-expiration-test.js && node src/test/06-tcp-networking-test.js && node src/test/07-persistence-test.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
